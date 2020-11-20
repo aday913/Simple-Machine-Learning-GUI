@@ -6,7 +6,7 @@ Graphical User Interface (GUI) that can be used to quickly apply common machine 
 
 **Todo's**:
 - [x] Develop initial GUI system that reads in data as a pandas dataframe
-- [ ] Develop initial ML algorithm to test that system works
+- [x] Develop initial ML algorithm to test that system works
 - [ ] Incorporate ML algorithms that train on the given dataset
 - [ ] Add additional ML features such as K-fold CV and confusion matrix creation
 - [ ] Ensure proper libraries are installed when user attempts to run the GUI
