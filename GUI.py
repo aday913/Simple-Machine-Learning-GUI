@@ -10,6 +10,8 @@ from tkinter import ttk # Used to create widgets
 from tkinter.filedialog import askopenfilename  # User selects single file
 import pandas   # Used for data handling
 
+import KNN
+
 class GUI(object):
     '''
     Main class object that will contain all the information of the GUI itself
@@ -25,49 +27,104 @@ class GUI(object):
         self.window = tk.Tk()
         self.window.title('Machine Learning Detection GUI')
         if test:
-            self.addTestWidgets()
+            self.testAddWidgets()
         else:
-            self.addWidgets()
+            self.addInitialWidgets()
         self.window.mainloop()
     
-    def addWidgets(self):
+    def addInitialWidgets(self):
         '''
         Function adds in the default widgets that the GUI will use, such
         as all of the relevant buttons, checkboxes, labels, etc.
         '''
-        # Create video analysis label
-        self.videoLabel = ttk.Label(self.window, 
-                        text='Click button to show image from video file')
-        self.videoLabel.grid(column=0, row=0)
+        # Create welcome label
+        self.welcomeLabel = ttk.Label(self.window, 
+                        text='Welcome to the Machine Learning GUI!')
+        self.welcomeLabel.grid(column=0, row=0)
 
-        # Create image analysis label
-        self.imageLabel = ttk.Label(self.window, 
-                            text='Click button to analyze particle image')
-        self.imageLabel.grid(column=0, row=1)
+        # Create instructions label
+        self.instructionsLabel = ttk.Label(self.window, 
+                text='Use the button below to choose your dataset (.csv file)')
+        self.instructionsLabel.grid(column=0, row=1)
 
-        # Create video analysis button
-        # self.testVideoButton = ttk.Button(self.window, text='Select Video',
-        #                             command=self.testVideoButtonClick)
-        # self.testVideoButton.grid(column=1, row=0)
-
-        # Create image analysis button
-        self.testImageButton = ttk.Button(self.window, text='Select Image',
-                                    command=self.testImageButtonClick)
-        self.testImageButton.grid(column=1, row=1)
-
-        # Create image analysis output label
-        self.outputLabel = ttk.Label(self.window,
-                            text='Output of image analysis: ')
-        self.outputLabel.grid(column=0, row=2)
+        # Create data input button
+        self.dataInputButton = ttk.Button(self.window, text='Select Data',
+                                    command=self.dataInputButtonClick)
+        self.dataInputButton.grid(column=0, row=2)
     
-    def testImageButtonClick(self):
+    def dataInputButtonClick(self):
         '''
-        Test func for when the image button in the test widgets is pressed
+        Allows the user to choose the data file (.csv) that contains the data
+        they want to use in the ML analysis
         '''
         filename = askopenfilename()
         output = pandas.read_csv(filename, header=0)
-        dataFrame = pandas.DataFrame(dataset)
-        self.outputLabel.configure(text=dataFrame.columns[0])
+        self.dataFrame = pandas.DataFrame(output)
+
+        self.nextStepLabel = ttk.Label(self.window, 
+                        text='Which column name contains the classes?')
+        self.nextStepLabel.grid(column=0, row=2)
+
+        self.classColName = tk.StringVar()
+        self.classColEntry = ttk.Entry(self.window, width=12, 
+            textvariable=self.classColName)
+        self.classColEntry.grid(column=0, row=3)
+
+        self.classColumnInput = ttk.Button(self.window, text='Next Step',
+                                    command=self.classInputClick)
+        self.classColumnInput.grid(column=0, row=4)
+
+        self.classColEntry.focus()
+    
+    def classInputClick(self):
+        '''
+        Button for when the user has inputted the name of the column with the
+        classes for each observation
+        '''
+        self.classColName = self.classColName.get()
+
+        self.nextStepLabel.configure(
+        text='Input any other columns you want to exclude separated by ", "'
+            )
+        
+        self.trashColNames = tk.StringVar()
+        self.trashColNamesEntry = ttk.Entry(self.window, width=12, 
+            textvariable=self.trashColNames)
+        self.trashColNamesEntry.grid(column=0, row=3)
+
+        self.trashColumnInput = ttk.Button(self.window, text='Next Step',
+                                    command=self.trashInputClick)
+        self.trashColumnInput.grid(column=0, row=4)
+
+        self.trashColNamesEntry.focus()
+
+    def trashInputClick(self):
+        '''
+        Button for when the user has inputted the names of columns that
+        they do not want to be included in the data
+        '''
+        droppedCols = [self.classColName]
+        temp = list(self.trashColNames.get().split(', '))
+        for i in temp:
+            droppedCols.append(i)
+        
+        self.y = self.dataFrame[self.classColName]
+        self.X = self.dataFrame.drop(columns=droppedCols)
+        self.X = self.X.values
+
+        KNN.optimizeKNN(self.X, self.y)
+        
+    
+    # ----------------------------------------------
+    # Below functions are used for testing purposes!
+    # ----------------------------------------------
+
+    def testAddWidgets(self):
+        '''
+        Function adds in the default widgets that the GUI will use, such
+        as all of the relevant buttons, checkboxes, labels, etc.
+        '''
+        pass
 
 if __name__ == "__main__":
     gui = GUI()
