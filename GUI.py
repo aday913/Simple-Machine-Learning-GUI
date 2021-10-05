@@ -105,8 +105,9 @@ class GUI(object):
         '''
         droppedCols = [self.classColName]
         temp = list(self.trashColNames.get().split(', '))
-        for i in temp:
-            droppedCols.append(i)
+        if temp != ['']:
+            for i in temp:
+                droppedCols.append(i)
         
         self.y = self.dataFrame[self.classColName]
         self.X = self.dataFrame.drop(columns=droppedCols)
