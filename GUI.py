@@ -104,9 +104,11 @@ class GUI(object):
         they do not want to be included in the data
         '''
         droppedCols = [self.classColName]
+        print(list(self.trashColNames.get().split(', ')))
         temp = list(self.trashColNames.get().split(', '))
-        for i in temp:
-            droppedCols.append(i)
+        if temp != ['']:
+            for i in temp:
+                droppedCols.append(i)
         
         self.y = self.dataFrame[self.classColName]
         self.X = self.dataFrame.drop(columns=droppedCols)
