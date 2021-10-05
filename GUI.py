@@ -104,6 +104,7 @@ class GUI(object):
         they do not want to be included in the data
         '''
         droppedCols = [self.classColName]
+        print(list(self.trashColNames.get().split(', ')))
         temp = list(self.trashColNames.get().split(', '))
         if temp != ['']:
             for i in temp:
