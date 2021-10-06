@@ -1,3 +1,4 @@
+# Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process ; & ./venv/scripts/activate.ps1 ; Set-ExecutionPolicy -ExecutionPolicy Default -Scope Process
 .vscode
 __pycache__
 venv
